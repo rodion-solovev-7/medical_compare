@@ -1,10 +1,11 @@
 import typing
 
 import sqlalchemy as sa
+from dependency_injector.wiring import inject, Provide
 from fastapi import FastAPI, Body, Depends
 from loguru import logger
 
-from common import db
+from common import db, di
 
 app = FastAPI()
 
@@ -22,7 +23,8 @@ async def say_hello(name: str):
 
 
 @app.get('/db')
-async def check_db(session: db.AsyncSession = Depends(db.get_session)):
+@inject
+async def check_db(session: db.AsyncSession = Depends(Provide[di.Container.session])):
     raw_query = sa.text("SELECT true, 'yes', 1;")
     try:
         result = await session.execute(raw_query)

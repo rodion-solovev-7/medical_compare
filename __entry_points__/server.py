@@ -7,10 +7,12 @@ import uvicorn
 from fastapi import FastAPI
 
 import config
-from common import db
+from common import db, di
 from web import health, v1_jsonrpc
 
 app = FastAPI()
+# без создания экземпляра контейнера di-инъекции работать не будут
+app.container = di.Container()
 
 
 @app.on_event('startup')

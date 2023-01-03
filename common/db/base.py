@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import AsyncGenerator, Generator
+from typing import AsyncIterator, Iterator
 
 import yoyo
 from loguru import logger
@@ -33,13 +33,13 @@ Base = SQLModel
 YOYO_DB_URL = f'postgresql://{_CONNECTION_POSTFIX}'
 
 
-async def get_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_session() -> AsyncIterator[AsyncSession]:
     """DI-инъекция для асинхронной работы с БД"""
     async with SessionLocal() as session:
         yield session
 
 
-def get_sync_session() -> Generator[Session, None, None]:
+def get_sync_session() -> Iterator[Session]:
     """DI-инъекция для синхронной работы с БД"""
     with SyncSessionLocal() as session:
         yield session

@@ -1,0 +1,23 @@
+# Test your FastAPI endpoints
+
+GET http://localhost:8080/
+Accept: application/json
+
+###
+
+GET http://localhost:8080/health
+Accept: application/json
+
+###
+
+GET http://localhost:8080/health/db
+Accept: application/json
+
+###
+
+POST http://localhost:8080/health/echo
+Content-Type: application/json
+
+{ "key" : "value", "list": [1, 2, 3] }
+
+###

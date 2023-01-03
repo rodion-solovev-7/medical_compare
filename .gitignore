@@ -1,0 +1,16 @@
+.cache/
+.idea/
+.tox/
+__pycache__/
+local.py
+logs/
+venv/
+.coverage
+.DS_Store
+htmlcov/
+docs/build/
+docs/source/modules/
+.pytest_cache/
+.scannerwork/
+reports
+.vscode/

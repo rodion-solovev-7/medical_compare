@@ -1,0 +1,13 @@
+asyncpg==0.27.0
+fastapi==0.88.0
+SQLAlchemy==1.4.41
+sqlmodel==0.0.8
+starlette==0.22.0
+uvicorn==0.20.0
+fastapi-jsonrpc==2.4.1
+Scrapy==2.7.1
+itemadapter==0.7.0
+yoyo-migrations==8.2.0
+loguru==0.6.0
+pydantic==1.10.2
+psycopg2-binary==2.9.5

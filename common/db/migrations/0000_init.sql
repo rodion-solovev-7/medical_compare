@@ -1,0 +1,4 @@
+CREATE TABLE analysis (
+    id UUID PRIMARY KEY NOT NULL,
+    data VARCHAR(128) NULL
+);

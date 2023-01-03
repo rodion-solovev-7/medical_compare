@@ -1,0 +1,27 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:14.3
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - '5432:5432'
+#  app:
+#    volumes:
+#      - './reports:/reports:rw'
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        - Test=true
+#    environment:
+#      - PYTHONIOENCODING=utf8
+#      - PYTHONPATH=.
+#      - DB_HOST=${DB_HOST:-postgres}
+#    ports:
+#      - '9001:9001'
+#      - '8080:8080'
+#    depends_on:
+#      - postgres

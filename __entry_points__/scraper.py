@@ -5,8 +5,9 @@ import subprocess
 
 
 def main():
+    # spider = 'invitro_analysis'
     spider = 'quotes'
-    run_line = f"scrapy crawl {spider}"
+    run_line = f'scrapy crawl {spider}'
     process = subprocess.Popen(run_line.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
 

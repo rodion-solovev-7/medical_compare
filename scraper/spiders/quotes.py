@@ -1,5 +1,5 @@
 import scrapy
-from scrapy.http import Response
+from scrapy.http import Response, Request
 
 
 class QuotesSpider(scrapy.Spider):
@@ -10,9 +10,10 @@ class QuotesSpider(scrapy.Spider):
     def start_requests(self):
         for page in range(1, 10 + 1):
             url = f'https://quotes.toscrape.com/page/{page}/'
-            yield scrapy.Request(url=url, callback=self.parse)
+            yield Request(url=url, callback=self.parse)
 
     def parse(self, response: Response, **kwargs):
+        self.log(f'Processed page headers={response.request.headers!r}')
         page = response.url.split("/")[-2]
         texts: list[str] = response.css('.quote > .text::text').extract()
         authors: list[str] = response.css('.quote .author::text').extract()

@@ -10,5 +10,6 @@ Scrapy==2.7.1
 itemadapter==0.7.0
 yoyo-migrations==8.2.0
 loguru==0.6.0
+pproxy==2.7.8
 pydantic==1.10.2
 psycopg2-binary==2.9.5

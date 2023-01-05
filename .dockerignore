@@ -1,0 +1,20 @@
+# Ignore everything
+*
+
+# Allow files and directories
+!/__entry_points__/
+!/common/
+!/config/
+!/jobs/
+!/scraper/
+!/tests/
+!/web/
+!/requirements.txt
+!/scrapy.cfg
+!/Makefile
+!/.python-version
+
+# Ignore unnecessary files & directories inside allowed directories
+**/__pycache__/
+/config/local.py
+/config/docker.py

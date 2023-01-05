@@ -1,3 +1,5 @@
+import config
+
 # Scrapy settings for scraper project
 #
 # For simplicity, this file contains only settings considered important or
@@ -56,15 +58,19 @@ DOWNLOAD_DELAY = 1.5
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
+    # Replace default useragent by random
     'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
-    # Tor Proxy Middleware
-    'scraper.middlewares.ProxyMiddleware': 350,
     'scraper.middlewares.RandomUserAgentMiddleware': 400,
     # 'scraper.middlewares.ScraperDownloaderMiddleware': 543,
 }
 
 # This points to your local proxy server that talks to Tor
-HTTP_PROXY = 'http://127.0.0.1:8181'
+if config.SCRAPER_USE_TOR_PROXY:
+    # Tor Proxy Middleware
+    DOWNLOADER_MIDDLEWARES.update({
+        'scraper.middlewares.ProxyMiddleware': 350,
+    })
+SCRAPER_TOR_HTTP_PROXY = 'http://127.0.0.1:8181'
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html

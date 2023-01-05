@@ -12,6 +12,9 @@ DB_USER = 'postgres'
 DB_PASS = 'postgres'
 DB_MAX_CONNECTION = 5
 
+# scraper
+SCRAPER_USE_TOR_PROXY = False
+
 # logging
 LOG_LEVEL = 'DEBUG'
 LOG_LEVEL_LIBRARY = 'DEBUG'

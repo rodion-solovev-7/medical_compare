@@ -42,7 +42,6 @@ class InvitroAnalysisSpider(scrapy.Spider):
         city_elements: SelectorList | list
         city_elements = response.css('.select-basket-city-column > a.select-basket-city-item')
 
-        hrefs = []
         for element in city_elements:
             href = element.attrib.get('href', None)
             if href is None:
@@ -68,9 +67,6 @@ class InvitroAnalysisSpider(scrapy.Spider):
                 url=url,
                 callback=self.parse_analysis_list,
             )
-
-            # TODO: временный костыль чтобы не плодить много запросов во время разработки
-            # break
 
     def parse_analysis_list(self, response: Response) -> Iterable[Request]:
         self.log(f'Processing analysis list page: "{response.url}"', level=logging.DEBUG)

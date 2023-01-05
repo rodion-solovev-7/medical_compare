@@ -29,6 +29,9 @@ DB_PASS = 'postgres'
 DB_ECHO = False
 DB_MAX_CONNECTION = 5
 
+# Настройка парсера
+SCRAPER_USE_TOR_PROXY = False
+
 LOG_SETTINGS = {
     'version': 1,
     'disable_existing_loggers': True,

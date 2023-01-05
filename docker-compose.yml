@@ -1,27 +1,67 @@
 version: '3'
+# You can override the environment, open a port, add a new service or volume in docker-compose.override.yml
 services:
+  # infrastructure services
   postgres:
     image: postgres:14.3
     environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=postgres
-    ports:
-      - '5432:5432'
-#  app:
-#    volumes:
-#      - './reports:/reports:rw'
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        - Test=true
-#    environment:
-#      - PYTHONIOENCODING=utf8
-#      - PYTHONPATH=.
-#      - DB_HOST=${DB_HOST:-postgres}
-#    ports:
-#      - '9001:9001'
-#      - '8080:8080'
-#    depends_on:
-#      - postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    restart: always
+  # may need only for scraper
+  socks5-tor:
+    image: leplusorg/tor@sha256:4c936e2618076183dadd5f6c98e925cb3d20f546ee279e52feb4a02425aff4b3
+    restart: unless-stopped
+  # may need only for scraper
+  http-socks5-proxy:
+    entrypoint: [
+      "pproxy",
+      "-l", "http://:8181",
+      "-r", "socks5://:9050",
+      "-vvv"
+    ]
+    build:
+      dockerfile: Dockerfile
+      context: .
+    restart: unless-stopped
+    depends_on:
+      - socks5-tor
+
+  # project services
+  web:
+    entrypoint: [ "python3.10", "__entry_points__/server.py" ]
+    build:
+      dockerfile: Dockerfile
+      context: .
+    environment:
+      PYTHONIOENCODING: utf8
+      PYTHONPATH: .
+      DB_HOST: ${DB_HOST:-postgres}
+    restart: unless-stopped
+    depends_on:
+      - postgres
+  jobs:
+    entrypoint: [ "python3.10", "__entry_points__/periodic_tasks.py" ]
+    build:
+      dockerfile: Dockerfile
+      context: .
+    environment:
+      PYTHONIOENCODING: utf8
+      PYTHONPATH: .
+      DB_HOST: ${DB_HOST:-postgres}
+    restart: unless-stopped
+    depends_on:
+      - postgres
+  scraper:
+    entrypoint: [ "scrapy", "crawl", "invitro_analysis" ]
+    build:
+      dockerfile: Dockerfile
+      context: .
+    environment:
+      PYTHONIOENCODING: utf8
+      PYTHONPATH: .
+      DB_HOST: ${DB_HOST:-postgres}
+    restart: on-failure
+    depends_on:
+      - postgres

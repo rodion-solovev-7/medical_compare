@@ -1,0 +1,46 @@
+version: '3'
+# You can override the environment, open a port, add a new service or volume HERE
+services:
+  # infrastructure services
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  socks5-tor:
+    ports:
+      - '9050:9050'
+  http-socks5-proxy:
+    ports:
+      - '8181:8181'
+    depends_on:
+      - socks5-tor
+
+  # project services
+  web:
+    environment:
+      DB_HOST: ${DB_HOST:-postgres}
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres
+  jobs:
+    environment:
+      DB_HOST: ${DB_HOST:-postgres}
+    depends_on:
+      - postgres
+  scraper:
+    environment:
+      DB_HOST: ${DB_HOST:-postgres}
+      # if you don't want to use tor, then toggle and remove depends_on from 'http-socks5-proxy'
+      SCRAPER_USE_TOR_PROXY: true
+    depends_on:
+      - postgres
+      - http-socks5-proxy
+
+volumes:
+  pgdata: { }

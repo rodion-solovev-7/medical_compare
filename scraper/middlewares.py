@@ -114,7 +114,9 @@ class RandomUserAgentMiddleware:
             request.headers.setdefault('User-Agent', user_agent)
 
 
-class ProxyMiddleware(object):
+class ProxyMiddleware:
     #Overide the request process by making it go through Tor
     def process_request(self, request: scrapy.Request, spider: scrapy.Spider):
-        request.meta['proxy'] = settings.HTTP_PROXY
+        proxy = settings.SCRAPER_TOR_HTTP_PROXY
+        request.meta['proxy'] = proxy
+        spider.logger.debug(f'Use {proxy=!r}')

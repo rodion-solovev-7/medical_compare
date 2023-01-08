@@ -1,6 +1,8 @@
 asyncpg==0.27.0
 dependency_injector==4.41.0
 fastapi==0.89.1
+fastapi-users==10.2.1
+fastapi-users-db-sqlalchemy==4.0.3
 SQLAlchemy==1.4.41
 sqlmodel==0.0.8
 starlette==0.22.0

@@ -4,14 +4,14 @@ from typing import AsyncIterator
 import yoyo
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlmodel import SQLModel
 
 import config
 
 __all__ = [
-    'DB_URL', 'engine', 'SessionLocal', 'Base', 'get_session',
-    'apply_migrations', 'AsyncSession',
+    'DB_URL', 'engine', 'SessionLocal', 'Base', 'SABase',
+    'get_session', 'apply_migrations', 'AsyncSession',
 ]
 
 
@@ -23,8 +23,9 @@ engine = create_async_engine(DB_URL, echo=config.DB_ECHO, future=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
 
-# класс для наследования моделями БД
+# классы для наследования моделями БД
 Base = SQLModel
+SABase = declarative_base(metadata=Base.metadata)
 
 # строка подключения для миграций
 YOYO_DB_URL = f'postgresql://{_CONNECTION_POSTFIX}'

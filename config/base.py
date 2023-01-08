@@ -59,6 +59,10 @@ class HealthStatus(enum.Enum):
 
 CURRENT_HEALTH_STATUS = HealthStatus.SHUTDOWN.value
 
+JWT_AUTH_SECRET = 'SECRET'
+# JWT_VERIFY_SECRET: ключ для генерации токенов для верификации аккаунта и сброса пароля
+JWT_VERIFY_SECRET = 'SECRET'
+
 # SCRAPY SETTINGS BELOW
 
 BOT_NAME = 'scraper'

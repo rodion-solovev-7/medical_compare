@@ -1,14 +1,16 @@
 import uuid
 from decimal import Decimal
 
-from sqlalchemy import Column, JSON
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
+from sqlalchemy import Column, JSON, Integer, String, Boolean
 from sqlmodel import Field, Relationship
 
-from .base import Base
+from .base import Base, SABase
 
 __all__ = [
     'Analysis',
     'City',
+    'User',
 ]
 
 
@@ -54,3 +56,15 @@ class Analysis(Base, table=True):
     class Config:
         # Needed for Column(JSON)
         arbitrary_types_allowed = True
+
+
+class User(SQLAlchemyBaseUserTable[int], SABase):
+    __tablename__ = 'user'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String(length=64), unique=True, nullable=False)
+    name = Column(String(length=64), nullable=False)
+    hashed_password = Column(String(length=128), nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    is_superuser = Column(Boolean, default=False, nullable=False)
+    is_verified = Column(Boolean, default=False, nullable=False)

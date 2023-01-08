@@ -36,3 +36,42 @@ GET http://localhost:8080/v1/city
 Content-Type: application/json
 
 ###
+
+POST http://localhost:8080/v1/user/register
+Content-Type: application/json
+
+{
+  "email": "king.arthur@camelot.bt",
+  "name": "Artur",
+  "password": "guinevere"
+}
+
+###
+
+POST http://localhost:8080/v1/user/jwt/login
+Content-Type: multipart/form-data;boundary="boundary"
+
+--boundary
+Content-Disposition: form-data; name="username"
+
+king.arthur@camelot.bt
+
+--boundary
+Content-Disposition: form-data; name="password"
+
+guinevere
+--boundary--
+
+###
+
+GET http://localhost:8080/v1/user/jwt/logout
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/v1/user/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMyIsImF1ZCI6WyJmYXN0YXBpLXVzZXJzOmF1dGgiXSwiZXhwIjoxNjc0Njc5OTYyfQ.ufqei1C91wTA_-wZdmmrSyiUF0R_czIPLhkK9JKhEq0
+Content-Type: application/json
+
+###
+

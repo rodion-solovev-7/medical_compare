@@ -36,8 +36,8 @@ services:
   scraper:
     environment:
       DB_HOST: ${DB_HOST:-postgres}
-      # if you don't want to use tor, then toggle and remove depends_on from 'http-socks5-proxy'
-      SCRAPER_USE_TOR_PROXY: true
+      # if you don't want to use tor, then toggle to null and remove depends_on from 'http-socks5-proxy'
+      SCRAPER_TOR_HTTP_PROXY: 'http://127.0.0.1:8181'
     depends_on:
       - postgres
       - http-socks5-proxy

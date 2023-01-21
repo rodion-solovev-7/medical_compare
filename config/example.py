@@ -13,7 +13,7 @@ DB_PASS = 'postgres'
 DB_MAX_CONNECTION = 5
 
 # scraper
-SCRAPER_USE_TOR_PROXY = False
+SCRAPER_TOR_HTTP_PROXY = None
 
 # logging
 LOG_LEVEL = 'DEBUG'

@@ -1,30 +1,11 @@
-import re
 from typing import Iterable
-from urllib import parse
 
 import scrapy
 from scrapy.http import Response, Request
 from scrapy.selector import Selector, SelectorList
 
-
-def urljoin(base: str, url: str, allow_fragments: bool = True) -> str:
-    """Версия urljoin, которая не ломает мозг"""
-    if base.endswith('/'):
-        base = base[:-1]
-    base = f'{base}/'
-    if url.startswith('/'):
-        url = url[1:]
-    return parse.urljoin(base=base, url=url, allow_fragments=allow_fragments)
-
-
-def extract_all_inner_text(selector: Selector) -> str:
-    """Возвращает весь текст из селектора и его дочерних элементов.
-    Предварительно очищает их от повторных пробелов, табуляций, переходов строк и пр. фигни.
-    """
-    all_text = '\n'.join(selector.css(' *::text').extract())
-    all_text = '\n'.join(re.split(r'[\n\r]+', all_text))
-    all_text = ' '.join(re.split(r'[\s\t]+', all_text))
-    return all_text
+from scraper.items import InvitroAnalyzeItem
+from scraper.utils import urljoin, extract_all_inner_text
 
 
 class InvitroAnalysisSpider(scrapy.Spider):
@@ -67,12 +48,16 @@ class InvitroAnalysisSpider(scrapy.Spider):
             url = urljoin(self.base_url, href)
             self.logger.debug(f'Goto url for city "{name}": "{url}"')
 
+            add_data = {
+                'city_href': href,
+                'city_url': url,
+                'city_name': name,
+            }
+
             yield Request(
                 meta={  # передаём meta-данные дальше - к другим обработчикам
                     **response.meta,
-                    'city_href': href,
-                    'city_url': url,
-                    'city_name': name,
+                    'add_data': add_data,
                 },
                 url=url,
                 callback=self.parse_analysis_list,
@@ -95,11 +80,16 @@ class InvitroAnalysisSpider(scrapy.Spider):
             url = urljoin(self.base_url, href)
             self.logger.debug(f'Goto url for analysis data: "{url}"')
 
+            add_data = {
+                **response.meta.get('add_data', {}),
+                'analysis_url': url,
+                'analysis_href': href,
+            }
+
             yield Request(
                 meta={  # передаём meta-данные дальше - к другим обработчикам
                     **response.meta,
-                    'analysis_url': url,
-                    'analysis_href': href,
+                    'add_data': add_data,
                 },
                 url=url,
                 callback=self.parse_analysis_info,
@@ -141,17 +131,23 @@ class InvitroAnalysisSpider(scrapy.Spider):
             '.info-block__price-text > '
             '.info-block__price--total::text'
         ).extract_first()
+        total_price = total_price.replace('\xa0', '\n').replace(' ', '')
 
-        yield {
-            'meta': response.meta,
-            'analysis_name': name.strip(),
-            'description': description.strip(),
-            'preparation': preparation.strip(),
-            'purpose': purpose.strip(),
-            'interpretation': interpretation.strip(),
-            'article_number': article_number.strip(),
-            'total_price': total_price.strip(),
-        }
+        add_data = response.meta.get('add_data', {})
+        yield InvitroAnalyzeItem(
+            city_href=add_data.get('city_href'),
+            city_url=add_data.get('city_url'),
+            city_name=add_data.get('city_name'),
+            analysis_href=add_data.get('analysis_href'),
+            analysis_url=add_data.get('analysis_url'),
+            analysis_name=name.strip(),
+            description=description.strip(),
+            preparation=preparation.strip(),
+            purpose=purpose.strip(),
+            interpretation=interpretation.strip(),
+            article_number=article_number.strip(),
+            total_price=total_price.strip(),
+        )
 
     def parse(self, response: Response, **kwargs):
         # Не используем стандартный обработчик, т.к. для каждого шага паука определили свои

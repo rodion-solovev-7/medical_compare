@@ -1,4 +1,4 @@
-import logging
+import re
 from typing import Iterable
 from urllib import parse
 
@@ -17,6 +17,16 @@ def urljoin(base: str, url: str, allow_fragments: bool = True) -> str:
     return parse.urljoin(base=base, url=url, allow_fragments=allow_fragments)
 
 
+def extract_all_inner_text(selector: Selector) -> str:
+    """Возвращает весь текст из селектора и его дочерних элементов.
+    Предварительно очищает их от повторных пробелов, табуляций, переходов строк и пр. фигни.
+    """
+    all_text = '\n'.join(selector.css(' *::text').extract())
+    all_text = '\n'.join(re.split(r'[\n\r]+', all_text))
+    all_text = ' '.join(re.split(r'[\s\t]+', all_text))
+    return all_text
+
+
 class InvitroAnalysisSpider(scrapy.Spider):
     name = 'invitro_analysis'
 
@@ -25,7 +35,7 @@ class InvitroAnalysisSpider(scrapy.Spider):
     start_urls = ['https://www.invitro.ru/analizes/for-doctors/']
 
     def start_requests(self) -> Iterable[Request]:
-        self.log(f'Sending start requests: {self.start_urls}', level=logging.DEBUG)
+        self.logger.debug(f'Sending start requests: {self.start_urls}')
 
         for url in self.start_urls:
             yield Request(
@@ -37,15 +47,15 @@ class InvitroAnalysisSpider(scrapy.Spider):
             )
 
     def parse_cities(self, response: Response) -> Iterable[Request]:
-        self.log(f'Processing main page (scraping cities): "{response.url}"', level=logging.DEBUG)
+        self.logger.debug(f'Processing main page (scraping cities): "{response.url}"')
 
-        city_elements: SelectorList | list
+        city_elements: SelectorList | list[Selector]
         city_elements = response.css('.select-basket-city-column > a.select-basket-city-item')
 
         for element in city_elements:
             href = element.attrib.get('href', None)
             if href is None:
-                self.log(f'Skip cause no href: {element}', level=logging.DEBUG)
+                self.logger.debug(f'Skip cause no href: {element}')
                 continue
 
             # TODO
@@ -53,9 +63,9 @@ class InvitroAnalysisSpider(scrapy.Spider):
                 continue
 
             name = element.css('*::text').extract_first(default=None)
-            self.log(f'HREF="{href}"', level=logging.DEBUG)
+            self.logger.debug(f'HREF="{href}"')
             url = urljoin(self.base_url, href)
-            self.log(f'Goto url for city "{name}": "{url}"', level=logging.DEBUG)
+            self.logger.debug(f'Goto url for city "{name}": "{url}"')
 
             yield Request(
                 meta={  # передаём meta-данные дальше - к другим обработчикам
@@ -69,7 +79,7 @@ class InvitroAnalysisSpider(scrapy.Spider):
             )
 
     def parse_analysis_list(self, response: Response) -> Iterable[Request]:
-        self.log(f'Processing analysis list page: "{response.url}"', level=logging.DEBUG)
+        self.logger.debug(f'Processing analysis list page: "{response.url}"')
 
         visible_query = '.pagination-items > .show-block-wrap:not([data-section-id]) .result-item__title > a'
         hidden_query = '#simplified_content > .node:not([data-section-id]) > a'
@@ -79,11 +89,11 @@ class InvitroAnalysisSpider(scrapy.Spider):
         for element in analysis_elements:
             href = element.attrib.get('href', None)
             if href is None:
-                self.log(f'Skip cause no href: {element}', level=logging.DEBUG)
+                self.logger.debug(f'Skip cause no href: {element}')
                 continue
 
             url = urljoin(self.base_url, href)
-            self.log(f'Goto url for analysis data: "{url}"', level=logging.DEBUG)
+            self.logger.debug(f'Goto url for analysis data: "{url}"')
 
             yield Request(
                 meta={  # передаём meta-данные дальше - к другим обработчикам
@@ -96,14 +106,51 @@ class InvitroAnalysisSpider(scrapy.Spider):
             )
 
     def parse_analysis_info(self, response: Response) -> Iterable[dict]:
-        self.log(f'Processing analysis info page: "{response.url}"', level=logging.DEBUG)
+        self.logger.debug(f'Processing analysis info page: "{response.url}"')
 
         name: str = response.css('.title-block.title-block--img.title-block--narrow > h1::text').extract_first()
+        description: str = extract_all_inner_text(
+            response.css(
+                '.article__slider-content-box.article__slider-analysis__content-box > '
+                '.article__slider-content:nth-child(1)'
+            )[0]
+        )
+        preparation: str = extract_all_inner_text(
+            response.css(
+                '.article__slider-content-box.article__slider-analysis__content-box > '
+                '.article__slider-content:nth-child(2)'
+            )[0]
+        )
+        purpose: str = extract_all_inner_text(
+            response.css(
+                '.article__slider-content-box.article__slider-analysis__content-box > '
+                '.article__slider-content:nth-child(3)'
+            )[0]
+        )
+        interpretation: str = extract_all_inner_text(
+            response.css(
+                '.article__slider-content-box.article__slider-analysis__content-box > '
+                '.article__slider-content:nth-child(4)'
+            )[0]
+        )
+        article_number: str = response.css(
+            '.info-block__section--article > .info-block__price::text'
+        ).extract_first()
+        total_price: str = response.css(
+            '.info-block__section--total > '
+            '.info-block__price-text > '
+            '.info-block__price--total::text'
+        ).extract_first()
 
-        # TODO: здесь нужно спарсить всё, что не приколочено гвоздями
         yield {
             'meta': response.meta,
-            'analysis_name': name,
+            'analysis_name': name.strip(),
+            'description': description.strip(),
+            'preparation': preparation.strip(),
+            'purpose': purpose.strip(),
+            'interpretation': interpretation.strip(),
+            'article_number': article_number.strip(),
+            'total_price': total_price.strip(),
         }
 
     def parse(self, response: Response, **kwargs):

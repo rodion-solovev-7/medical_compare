@@ -1,18 +1,17 @@
 from pathlib import Path
-from typing import AsyncIterator, Iterator
+from typing import AsyncIterator
 
 import yoyo
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.future import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
 
 import config
 
 __all__ = [
-    'DB_URL', 'engine', 'sync_engine', 'SessionLocal', 'SyncSessionLocal',
-    'Base', 'get_session', 'get_sync_session', 'apply_migrations', 'AsyncSession', 'Session',
+    'DB_URL', 'engine', 'SessionLocal', 'Base', 'get_session',
+    'apply_migrations', 'AsyncSession',
 ]
 
 
@@ -21,10 +20,8 @@ __all__ = [
 _CONNECTION_POSTFIX = f'{config.DB_USER}:{config.DB_PASS}@{config.DB_HOST}:{config.DB_PORT}/{config.DB_NAME}'
 DB_URL = f'postgresql+asyncpg://{_CONNECTION_POSTFIX}'
 engine = create_async_engine(DB_URL, echo=config.DB_ECHO, future=True)
-sync_engine = create_engine(DB_URL, echo=config.DB_ECHO, future=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
-SyncSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=sync_engine, class_=Session)
 
 # класс для наследования моделями БД
 Base = SQLModel
@@ -36,12 +33,6 @@ YOYO_DB_URL = f'postgresql://{_CONNECTION_POSTFIX}'
 async def get_session() -> AsyncIterator[AsyncSession]:
     """DI-инъекция для асинхронной работы с БД"""
     async with SessionLocal() as session:
-        yield session
-
-
-def get_sync_session() -> Iterator[Session]:
-    """DI-инъекция для синхронной работы с БД"""
-    with SyncSessionLocal() as session:
         yield session
 
 

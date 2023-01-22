@@ -16,6 +16,3 @@ class Container(containers.DeclarativeContainer):
     session: Provider[db.AsyncSession] = Factory(
         db.SessionLocal,
     )
-    sync_session: Provider[db.Session] = Factory(
-        db.SyncSessionLocal,
-    )

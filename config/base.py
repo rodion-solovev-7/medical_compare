@@ -29,9 +29,6 @@ DB_PASS = 'postgres'
 DB_ECHO = False
 DB_MAX_CONNECTION = 5
 
-# Настройка парсера
-SCRAPER_USE_TOR_PROXY = False
-
 LOG_SETTINGS = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -61,3 +58,34 @@ class HealthStatus(enum.Enum):
 
 
 CURRENT_HEALTH_STATUS = HealthStatus.SHUTDOWN.value
+
+# SCRAPY SETTINGS BELOW
+
+BOT_NAME = 'scraper'
+
+USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:108.0) Gecko/20100101 Firefox/108.0'
+USER_AGENT_LIST = [
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:108.0) Gecko/20100101 Firefox/108.0',
+    'Mozilla/5.0 (X11; Linux x86_64; rv:108.0) Gecko/20100101 Firefox/108.0',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36',
+]
+
+ROBOTSTXT_OBEY = False
+CONCURRENT_REQUESTS = 32
+DOWNLOAD_DELAY = 1.5
+
+SCRAPER_TOR_HTTP_PROXY = None
+SCRAPER_SAVE_SCRAPED_TO_DB = False
+
+AUTOTHROTTLE_ENABLED = True
+AUTOTHROTTLE_START_DELAY = 5
+AUTOTHROTTLE_MAX_DELAY = 60
+AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
+AUTOTHROTTLE_DEBUG = True
+
+HTTPCACHE_ENABLED = False
+HTTPCACHE_EXPIRATION_SECS = 0
+HTTPCACHE_DIR = 'httpcache'
+HTTPCACHE_IGNORE_HTTP_CODES = []
+
+REQUEST_FINGERPRINTER_IMPLEMENTATION = '2.7'

@@ -1,8 +1,10 @@
+import datetime
 import uuid
 from decimal import Decimal
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy import Column, JSON, Integer, String, Boolean
+from sqlalchemy.orm import relationship
 from sqlmodel import Field, Relationship
 
 from .base import Base, SABase
@@ -11,6 +13,7 @@ __all__ = [
     'Analysis',
     'City',
     'User',
+    'CustomAnalysis',
 ]
 
 
@@ -68,3 +71,18 @@ class User(SQLAlchemyBaseUserTable[int], SABase):
     is_active = Column(Boolean, default=True, nullable=False)
     is_superuser = Column(Boolean, default=False, nullable=False)
     is_verified = Column(Boolean, default=False, nullable=False)
+
+    # custom_analyses = relationship('CustomAnalysis', back_populates='user')
+
+
+class CustomAnalysis(Base, table=True):
+    __tablename__ = 'customanalysis'
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, nullable=False)
+    name: str
+    unit: str
+    value: float
+    created_at: datetime.datetime = Field(default_factory=datetime.datetime.utcnow, nullable=False)
+
+    user_id: int = Field(foreign_key='user.id', nullable=False)
+    user: User = Relationship(sa_relationship=relationship('User', back_populates='custom_analyses'))

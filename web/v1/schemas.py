@@ -1,5 +1,7 @@
-from fastapi_users import schemas, models
-from pydantic import EmailStr
+import uuid
+
+from fastapi_users import models, schemas
+from pydantic import BaseModel, EmailStr
 
 
 class UserRead(schemas.BaseUser[int]):
@@ -20,3 +22,26 @@ class UserCreate(schemas.BaseUserCreate):
 
 class UserUpdate(schemas.BaseUserUpdate):
     name: str
+
+
+class CustomAnalysisRead(BaseModel):
+    name: str | None = None
+
+
+class CustomAnalysisCreate(BaseModel):
+    name: str
+    unit: str
+    value: str
+
+
+class CustomAnalysisDelete(BaseModel):
+    id: uuid.UUID | None = None
+    name: str | None = None
+
+
+class SugarAnalysisCreate(BaseModel):
+    value: float
+
+
+class SugarAnalysisDelete(BaseModel):
+    id: uuid.UUID

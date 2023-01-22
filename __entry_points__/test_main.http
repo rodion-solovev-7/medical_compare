@@ -18,7 +18,14 @@ Accept: application/json
 POST http://localhost:8080/health/echo
 Content-Type: application/json
 
-{ "key" : "value", "list": [1, 2, 3] }
+{
+  "key": "value",
+  "list": [
+    1,
+    2,
+    3
+  ]
+}
 
 ###
 
@@ -65,13 +72,83 @@ guinevere
 ###
 
 GET http://localhost:8080/v1/user/jwt/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImF1ZCI6WyJmYXN0YXBpLXVzZXJzOmF1dGgiXSwiZXhwIjoxNjc0NzQyMjEwfQ.FiKyXesMzOlbu3eTu5_ixPZXI1xwTOBue5QEBnEFkx8
 Content-Type: application/json
 
 ###
 
 GET http://localhost:8080/v1/user/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMyIsImF1ZCI6WyJmYXN0YXBpLXVzZXJzOmF1dGgiXSwiZXhwIjoxNjc0Njc5OTYyfQ.ufqei1C91wTA_-wZdmmrSyiUF0R_czIPLhkK9JKhEq0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImF1ZCI6WyJmYXN0YXBpLXVzZXJzOmF1dGgiXSwiZXhwIjoxNjc0NzQyMjEwfQ.FiKyXesMzOlbu3eTu5_ixPZXI1xwTOBue5QEBnEFkx8
 Content-Type: application/json
 
 ###
 
+GET http://localhost:8080/v1/personal/sugar
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImF1ZCI6WyJmYXN0YXBpLXVzZXJzOmF1dGgiXSwiZXhwIjoxNjc0NzQyMjEwfQ.FiKyXesMzOlbu3eTu5_ixPZXI1xwTOBue5QEBnEFkx8
+Content-Type: application/json
+
+###
+
+POST http://localhost:8080/v1/personal/sugar
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImF1ZCI6WyJmYXN0YXBpLXVzZXJzOmF1dGgiXSwiZXhwIjoxNjc0NzQyMjEwfQ.FiKyXesMzOlbu3eTu5_ixPZXI1xwTOBue5QEBnEFkx8
+Content-Type: application/json
+
+{
+  "value": 5.9
+}
+
+###
+
+DELETE http://localhost:8080/v1/personal/sugar
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImF1ZCI6WyJmYXN0YXBpLXVzZXJzOmF1dGgiXSwiZXhwIjoxNjc0NzQyMjEwfQ.FiKyXesMzOlbu3eTu5_ixPZXI1xwTOBue5QEBnEFkx8
+Content-Type: application/json
+
+{
+  "id": "451ea894-1593-42c6-a674-4ea0b54e13d5"
+}
+
+###
+
+GET http://localhost:8080/v1/personal/custom
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImF1ZCI6WyJmYXN0YXBpLXVzZXJzOmF1dGgiXSwiZXhwIjoxNjc0NzQyMjEwfQ.FiKyXesMzOlbu3eTu5_ixPZXI1xwTOBue5QEBnEFkx8
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/v1/personal/custom
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImF1ZCI6WyJmYXN0YXBpLXVzZXJzOmF1dGgiXSwiZXhwIjoxNjc0NzQyMjEwfQ.FiKyXesMzOlbu3eTu5_ixPZXI1xwTOBue5QEBnEFkx8
+Content-Type: application/json
+
+{
+  "name": "Сахар в крови"
+}
+
+###
+
+GET http://localhost:8080/v1/personal/custom?name=Сахар%20в%20крови
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImF1ZCI6WyJmYXN0YXBpLXVzZXJzOmF1dGgiXSwiZXhwIjoxNjc0NzQyMjEwfQ.FiKyXesMzOlbu3eTu5_ixPZXI1xwTOBue5QEBnEFkx8
+Content-Type: application/json
+
+###
+
+POST http://localhost:8080/v1/personal/custom
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImF1ZCI6WyJmYXN0YXBpLXVzZXJzOmF1dGgiXSwiZXhwIjoxNjc0NzQyMjEwfQ.FiKyXesMzOlbu3eTu5_ixPZXI1xwTOBue5QEBnEFkx8
+Content-Type: application/json
+
+{
+  "name": "Белки в крови",
+  "unit": "г/л",
+  "value": 8
+}
+
+###
+
+DELETE http://localhost:8080/v1/personal/custom
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImF1ZCI6WyJmYXN0YXBpLXVzZXJzOmF1dGgiXSwiZXhwIjoxNjc0NzQyMjEwfQ.FiKyXesMzOlbu3eTu5_ixPZXI1xwTOBue5QEBnEFkx8
+Content-Type: application/json
+
+{
+  "id": "3f160ec9-acde-4e50-9e52-bae3bf2fcbb7"
+}
+
+###

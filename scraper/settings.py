@@ -8,6 +8,7 @@ import config
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+from common import di
 
 BOT_NAME = config.BOT_NAME
 
@@ -76,9 +77,12 @@ if SCRAPER_TOR_HTTP_PROXY is not None:
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'scraper.pipelines.ScraperPipeline': 300,
-#}
+ITEM_PIPELINES = {}
+
+if config.SCRAPER_SAVE_SCRAPED_TO_DB:
+    ITEM_PIPELINES.update({
+        'scraper.pipelines.SaveDbPipeline': 200,
+    })
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -104,3 +108,6 @@ HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 # Set settings whose default value is deprecated to a future-proof value
 REQUEST_FINGERPRINTER_IMPLEMENTATION = config.REQUEST_FINGERPRINTER_IMPLEMENTATION
 TWISTED_REACTOR = 'twisted.internet.asyncioreactor.AsyncioSelectorReactor'
+
+# Init di container for @inject working
+container = di.Container()

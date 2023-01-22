@@ -5,7 +5,7 @@ from scrapy.http import Response, Request
 from scrapy.selector import Selector, SelectorList
 
 from scraper.items import InvitroAnalyzeItem
-from scraper.utils import urljoin, extract_all_inner_text
+from scraper.utils import urljoin, extract_all_inner_text, parse_price
 
 
 class InvitroAnalysisSpider(scrapy.Spider):
@@ -131,7 +131,7 @@ class InvitroAnalysisSpider(scrapy.Spider):
             '.info-block__price-text > '
             '.info-block__price--total::text'
         ).extract_first()
-        total_price = total_price.replace('\xa0', '\n').replace(' ', '')
+        total_price = parse_price(total_price.replace('\xa0', '\n'))
 
         add_data = response.meta.get('add_data', {})
         yield InvitroAnalyzeItem(
@@ -146,7 +146,7 @@ class InvitroAnalysisSpider(scrapy.Spider):
             purpose=purpose.strip(),
             interpretation=interpretation.strip(),
             article_number=article_number.strip(),
-            total_price=total_price.strip(),
+            total_price=total_price,
         )
 
     def parse(self, response: Response, **kwargs):

@@ -3,6 +3,7 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
 from dataclasses import dataclass
+from decimal import Decimal
 
 
 @dataclass
@@ -18,4 +19,4 @@ class InvitroAnalyzeItem:
     purpose: str | None = None
     interpretation: str | None = None
     article_number: str | None = None
-    total_price: str | None = None
+    total_price: str | Decimal | float | None = None

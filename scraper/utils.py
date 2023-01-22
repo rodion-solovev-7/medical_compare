@@ -1,3 +1,4 @@
+import decimal
 import re
 from urllib import parse
 
@@ -22,3 +23,10 @@ def extract_all_inner_text(selector: Selector) -> str:
     all_text = '\n'.join(re.split(r'[\n\r]+', all_text))
     all_text = ' '.join(re.split(r'[\s\t]+', all_text))
     return all_text
+
+
+def parse_price(text: str) -> decimal.Decimal:
+    """Парсит цену из строк вида '1 000.00 руб.' в Decimal"""
+    price: str = re.findall(r'\d+\s?\d+[.,]?\d+', text)[0]
+    price = price.replace(' ', '').replace(',', '.')
+    return decimal.Decimal(price)

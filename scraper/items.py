@@ -1,7 +1,3 @@
-# Define here the models for your scraped items
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/items.html
 from dataclasses import dataclass
 from decimal import Decimal
 
@@ -20,3 +16,10 @@ class InvitroAnalyzeItem:
     interpretation: str | None = None
     article_number: str | None = None
     total_price: str | Decimal | float | None = None
+
+
+@dataclass
+class InvitroCityItem:
+    href: str | None = None
+    url: str | None = None
+    name: str | None = None

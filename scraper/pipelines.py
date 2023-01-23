@@ -7,7 +7,7 @@ from scrapy import Item, Spider
 
 from common import di, db
 from common.db import models
-from scraper.items import InvitroAnalyzeItem
+from scraper.items import InvitroAnalyzeItem, InvitroCityItem
 
 
 class SaveDbPipeline:
@@ -30,6 +30,10 @@ class SaveDbPipeline:
             adapter = dict(**ItemAdapter(item))
             adapter['name'] = adapter.pop('analysis_name', None)
             record = models.Analysis(**adapter)
+        elif isinstance(item, InvitroCityItem):
+            spider.logger.debug('Identified InvitroCity result')
+            adapter = dict(**ItemAdapter(item))
+            record = models.City(**adapter)
 
         if record is not None:
             session.add(record)

@@ -1,6 +1,3 @@
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
 
@@ -14,6 +11,10 @@ from scraper.items import InvitroAnalyzeItem
 
 
 class SaveDbPipeline:
+    @inject
+    def open_spider(self, _: Spider):
+        db.apply_migrations()
+
     @inject
     async def process_item(
         self,

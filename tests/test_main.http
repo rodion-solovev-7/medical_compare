@@ -31,3 +31,8 @@ GET http://localhost:8080/v1/analysis/d13b509a-9d02-49a3-be71-96fcb80c4c37
 Content-Type: application/json
 
 ###
+
+GET http://localhost:8080/v1/city
+Content-Type: application/json
+
+###

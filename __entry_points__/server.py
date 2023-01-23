@@ -9,6 +9,7 @@ from fastapi import FastAPI
 import config
 from common import db, di
 from web import health
+from web.v1 import analysis
 
 app = FastAPI()
 # без создания экземпляра контейнера di-инъекции работать не будут
@@ -29,6 +30,7 @@ async def shutdown_event():
 
 # add sub-apps
 app.mount('/health', health.app)
+app.mount('/v1/analysis', analysis.app)
 # app.mount('/v1/jsonrpc', v1_jsonrpc.app)
 
 

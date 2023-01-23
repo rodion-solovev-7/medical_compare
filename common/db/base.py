@@ -44,6 +44,11 @@ def apply_migrations():
     with backend.lock():
         migrations = yoyo.read_migrations(migrations_folder.as_posix())
         if not migrations:
-            logger.info('No migrations to apply')
+            logger.info('No migrations found')
             return
-        backend.apply_migrations(backend.to_apply(migrations))
+        to_migrate = backend.to_apply(migrations)
+        if len(to_migrate) > 0:
+            logger.info('Applying migrations')
+            backend.apply_migrations(to_migrate)
+        else:
+            logger.info('No migrations to apply')

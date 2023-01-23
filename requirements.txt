@@ -1,6 +1,6 @@
 asyncpg==0.27.0
 dependency_injector==4.41.0
-fastapi==0.88.0
+fastapi==0.89.1
 SQLAlchemy==1.4.41
 sqlmodel==0.0.8
 starlette==0.22.0
@@ -11,5 +11,5 @@ itemadapter==0.7.0
 yoyo-migrations==8.2.0
 loguru==0.6.0
 pproxy==2.7.8
-pydantic==1.10.2
+pydantic==1.10.4
 psycopg2-binary==2.9.5

@@ -1,19 +1,15 @@
 import uuid
 from decimal import Decimal
 
-from sqlalchemy import Column, JSON, cast, Index, func
-from sqlalchemy.dialects import postgresql
+from sqlalchemy import Column, JSON
 from sqlmodel import Field
 
 from .base import Base
 
 __all__ = [
     'Analysis',
+    'City',
 ]
-
-
-# def create_tsvector(*args):
-#     return func.to_tsvector('english', ' '.join(args))
 
 
 class Analysis(Base, table=True):
@@ -32,15 +28,6 @@ class Analysis(Base, table=True):
         default_factory=dict,
         sa_column=Column(JSON),
         description='Слабоструктурированные доп. данные об анализе',
-    )
-
-    __table_args__ = (
-        # Needed for full text search by 'name' field
-        Index(
-            'ix_analysis_name_tsv',
-            func.to_tsvector('english', 'name'),
-            postgresql_using='gin',
-        ),
     )
 
     class Config:

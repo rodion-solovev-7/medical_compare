@@ -108,6 +108,3 @@ HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 # Set settings whose default value is deprecated to a future-proof value
 REQUEST_FINGERPRINTER_IMPLEMENTATION = config.REQUEST_FINGERPRINTER_IMPLEMENTATION
 TWISTED_REACTOR = 'twisted.internet.asyncioreactor.AsyncioSelectorReactor'
-
-# Init di container for @inject working
-container = di.Container()

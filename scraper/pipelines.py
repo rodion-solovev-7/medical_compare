@@ -13,6 +13,8 @@ from scraper.items import InvitroAnalyzeItem, InvitroCityItem
 class SaveDbPipeline:
     @inject
     def open_spider(self, _: Spider):
+        # Init di container for @inject working
+        di.Container()
         db.apply_migrations()
 
     @inject

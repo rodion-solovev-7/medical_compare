@@ -21,9 +21,9 @@ async def get_analysis_list(
 ):
     query = sa.select(models.Analysis).offset(offset).limit(limit)
     if q is not None:
-        # noinspection PyUnresolvedReferences
-        query = query.where(models.Analysis.name.contains(q))
-    result = await session.execute(query)
+        # для нормального использования индекса (orm по умолчанию генерит кривой sql)
+        query = query.where(sa.text("name ILIKE '%' || :q || '%'"))
+    result = await session.execute(query, {'q': q})
     # unpacking from tuple with single element
     return [r[0] for r in result.all()]
 
@@ -38,4 +38,4 @@ async def get_single_analysis(
     query = sa.select(models.Analysis).where(models.Analysis.id == analysis_id)
     result = await session.execute(query)
     # unpacking from tuple with single element
-    return result.one()[0]
+    return result.one_or_none()[0]

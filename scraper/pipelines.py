@@ -1,6 +1,5 @@
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-
-
+import sqlalchemy as sa
 from dependency_injector.wiring import inject, Provide
 from itemadapter import ItemAdapter
 from scrapy import Item, Spider
@@ -25,21 +24,47 @@ class SaveDbPipeline:
         session: db.AsyncSession = Provide[di.Container.session],
     ) -> Item:
         spider.logger.debug('Start processing item %s: %s', type(item), item)
-        record = None
 
         if isinstance(item, InvitroAnalyzeItem):
             spider.logger.debug('Identified InvitroAnalyze result')
-            adapter = dict(**ItemAdapter(item))
-            adapter['name'] = adapter.pop('analysis_name', None)
-            record = models.Analysis(**adapter)
+            await self.add_analysis(
+                ItemAdapter(item),
+                session=session,
+            )
         elif isinstance(item, InvitroCityItem):
             spider.logger.debug('Identified InvitroCity result')
-            adapter = dict(**ItemAdapter(item))
-            record = models.City(**adapter)
-
-        if record is not None:
-            session.add(record)
-            await session.commit()
+            await self.add_analysis(
+                ItemAdapter(item),
+                session=session,
+            )
         else:
             spider.logger.debug('NO_SAVE_DB: cannot identify item %s: %s', type(item), item)
+
         return item
+
+    async def add_analysis(
+        self,
+        adapter: ItemAdapter,
+        *,
+        session: db.AsyncSession,
+    ) -> None:
+        item = dict(**adapter)
+        item['name'] = item.pop('analysis_name', None)
+
+        q = sa.select(models.City).where(models.City.name == item['city_name'])
+        result = await session.execute(q)
+        city: db.City = result.one()[0]
+
+        analysis = models.Analysis(**item, city_id=city.id)
+        session.add(analysis)
+        await session.commit()
+
+    async def add_city(
+        self,
+        adapter: ItemAdapter,
+        *,
+        session: db.AsyncSession,
+    ) -> None:
+        city = models.City(**adapter)
+        session.add(city)
+        await session.commit()

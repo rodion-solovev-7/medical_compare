@@ -14,6 +14,7 @@ app = FastAPI()
 @inject
 async def get_analysis_list(
     q: str | None = Query(default=None, description='Поисковый запрос по названию'),
+    city: str | None = Query(default=None, description='Город'),
     offset: int = Query(default=0, ge=0, description='Смещение по поисковым результатам'),
     limit: int = Query(default=100, lte=100, description='Кол-во результатов поиск'),
     *,
@@ -22,7 +23,11 @@ async def get_analysis_list(
     query = sa.select(models.Analysis).offset(offset).limit(limit)
     if q is not None:
         # для нормального использования индекса (orm по умолчанию генерит кривой sql)
-        query = query.where(sa.text("name ILIKE '%' || :q || '%'"))
+        query = query.where(sa.text("analysis.name ILIKE '%' || :q || '%'"))
+    if city is not None:
+        query = query.join(models.City).where(
+            models.City.name.ilike(city),
+        )
     result = await session.execute(query, {'q': q})
     # unpacking from tuple with single element
     return [r[0] for r in result.all()]
@@ -38,4 +43,7 @@ async def get_single_analysis(
     query = sa.select(models.Analysis).where(models.Analysis.id == analysis_id)
     result = await session.execute(query)
     # unpacking from tuple with single element
-    return result.one_or_none()[0]
+    analysis_tuple = result.one_or_none()
+    if analysis_tuple is None:
+        return None
+    return analysis_tuple[0]

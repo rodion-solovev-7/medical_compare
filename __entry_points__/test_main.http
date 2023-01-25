@@ -22,7 +22,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8080/v1/analysis?q=ПЦР
+GET http://localhost:8080/v1/analysis?q=ПЦР&city=Москва
 Content-Type: application/json
 
 ###

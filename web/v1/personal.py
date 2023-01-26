@@ -151,3 +151,40 @@ async def delete_custom_analysis(
 
     await session.execute(query)
     await session.commit()
+
+
+@app.get('/follow-history', response_model=list[db.LinkFollowingHistory])
+@inject
+async def get_follow_history_list(
+    offset: int = Query(default=0, ge=0, description='Смещение по поисковым результатам'),
+    limit: int = Query(default=100, lte=100, description='Кол-во результатов поиска'),
+    *,
+    user: db.User = Depends(current_user),
+    session: db.AsyncSession = Depends(Provide[di.Container.session]),
+):
+    query = sa.select(db.LinkFollowingHistory).where(
+        db.LinkFollowingHistory.user_id == user.id,
+    ).order_by(
+        db.LinkFollowingHistory.created_at.desc()
+    ).offset(offset).limit(limit)
+    result = await session.execute(query)
+    # unpacking from tuple with single element
+    return [r[0] for r in result.all()]
+
+
+@app.post('/follow-history', response_model=db.LinkFollowingHistory)
+@inject
+async def add_follow_history(
+    follow_history: schemas.LinkFollowingHistoryCreate,
+    *,
+    user: db.User = Depends(current_user),
+    session: db.AsyncSession = Depends(Provide[di.Container.session]),
+):
+    model = db.LinkFollowingHistory(
+        link=follow_history.link,
+        user_id=user.id,
+    )
+    session.add(model)
+    await session.commit()
+    await session.refresh(model)
+    return model

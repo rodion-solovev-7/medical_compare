@@ -14,6 +14,7 @@ __all__ = [
     'City',
     'User',
     'CustomAnalysis',
+    'LinkFollowingHistory',
 ]
 
 
@@ -73,6 +74,7 @@ class User(SQLAlchemyBaseUserTable[int], SABase):
     is_verified = Column(Boolean, default=False, nullable=False)
 
     # custom_analyses = relationship('CustomAnalysis', back_populates='user')
+    # custom_analyses = relationship('LinkFollowingHistory', back_populates='user')
 
 
 class CustomAnalysis(Base, table=True):
@@ -86,3 +88,15 @@ class CustomAnalysis(Base, table=True):
 
     user_id: int = Field(foreign_key='user.id', nullable=False)
     user: User = Relationship(sa_relationship=relationship('User', back_populates='custom_analyses'))
+
+
+class LinkFollowingHistory(Base, table=True):
+    """История переходов по ссылкам на анализы"""
+    __tablename__ = 'linkfollowinghistory'
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, nullable=False)
+    link: str
+    created_at: datetime.datetime = Field(default_factory=datetime.datetime.utcnow, nullable=False)
+
+    user_id: int = Field(foreign_key='user.id', nullable=False)
+    user: User = Relationship(sa_relationship=relationship('User', back_populates='link_followings_history'))

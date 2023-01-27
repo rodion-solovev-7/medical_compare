@@ -153,6 +153,7 @@ class InvitroAnalysisSpider(AbstractInvitroSpider):
 
         add_data = response.meta.get('add_data', {})
         yield InvitroAnalyzeItem(
+            url=response.url,
             city_href=add_data.get('city_href'),
             city_url=add_data.get('city_url'),
             city_name=add_data.get('city_name'),

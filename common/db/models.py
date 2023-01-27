@@ -50,12 +50,8 @@ class Analysis(Base, table=True):
 
     city_id: uuid.UUID = Field(foreign_key='city.id', nullable=False)
     city: City = Relationship(back_populates='analyses')
-    # city: City = Relationship(
-    #     sa_relationship_kwargs={
-    #         'primaryjoin': 'City.id==Analysis.city_id',
-    #         'lazy': 'joined',
-    #     }
-    # )
+
+    link_followings_history: list['LinkFollowingHistory'] = Relationship(back_populates='analysis')
 
     class Config:
         # Needed for Column(JSON)
@@ -95,8 +91,10 @@ class LinkFollowingHistory(Base, table=True):
     __tablename__ = 'linkfollowinghistory'
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, nullable=False)
-    link: str
     created_at: datetime.datetime = Field(default_factory=datetime.datetime.utcnow, nullable=False)
 
     user_id: int = Field(foreign_key='user.id', nullable=False)
     user: User = Relationship(sa_relationship=relationship('User', back_populates='link_followings_history'))
+
+    analysis_id: uuid.UUID = Field(foreign_key='analysis.id', nullable=False)
+    analysis: Analysis = Relationship(back_populates='link_followings_history')

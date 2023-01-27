@@ -22,6 +22,15 @@ cp docker-compose.override.example.yml docker-compose.override.yml
 * SCRAPER_TOR_HTTP_PROXY - адрес прокси при парсинге (если прокси не используется, то оставить равным `None`)
 * SCRAPER_SAVE_SCRAPED_TO_DB - будет ли сохранять парсер данные в БД (по умолчанию `False`)
 
+### Первый запуск
+
+После конфигурации проект запустится абсолютно пустым, без каких-либо данных в БД.
+Чтобы заполнить БД данными, нужно хотя бы один раз запустить парсеры одного из источников:
+```bash
+scrapy crawl invitro_city
+scrapy crawl invitro_analysis
+```
+
 ### Готовые make-команды
 
 Чтобы увидеть список команд, выполните:
@@ -33,7 +42,7 @@ make help
 help:         Показывает все команды из Makefile
 ps:           Показывает состояние сервисов
 local:        Поднимает БД и др. необходимые сервисы из docker-compose.yml (и .override.yml). Сам сервер и пр. нужно запускать руками
-tor:          Поднимает БД и др. необходимые сервисы из docker-compose.yml (и .override.yml). Сам сервер и пр. нужно запускать руками
+tor:          Поднимает tor и прокси из docker-compose.yml (и .override.yml). Сам сервер и пр. нужно запускать руками
 up:           Поднимает ВСЕ сервисы из docker-compose.yml (и .override.yml)
 down:         Отключает ВСЕ сервисы из docker-compose.yml
 destroy:      Отключает ВСЕ сервисы из docker-compose.yml и чистит их Volumes (например обнуляет БД)

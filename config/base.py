@@ -63,6 +63,8 @@ JWT_AUTH_SECRET = 'SECRET'
 # JWT_VERIFY_SECRET: ключ для генерации токенов для верификации аккаунта и сброса пароля
 JWT_VERIFY_SECRET = 'SECRET'
 
+AUTO_SCRAPING_DELAY = 60 * 60 * 24 * 7  # 1 week
+
 # SCRAPY SETTINGS BELOW
 
 BOT_NAME = 'scraper'

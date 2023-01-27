@@ -1,3 +1,4 @@
-from .alive import app_alive
+from . import alive
+from . import scrape
 
-__all__ = ['alive']
+__all__ = ['alive', 'scape']

@@ -13,6 +13,7 @@ async def startup_event():
     await db.engine.connect()
     all_jobs = [
         jobs.alive.app_alive,
+        jobs.scrape.scrape,
     ]
     for job in all_jobs:
         asyncio.get_event_loop().create_task(job())

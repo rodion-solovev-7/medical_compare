@@ -48,4 +48,4 @@ class SugarAnalysisDelete(BaseModel):
 
 
 class LinkFollowingHistoryCreate(BaseModel):
-    link: str
+    analysis_id: uuid.UUID

@@ -33,7 +33,7 @@ class SaveDbPipeline:
             )
         elif isinstance(item, InvitroCityItem):
             spider.logger.debug('Identified InvitroCity result')
-            await self.add_analysis(
+            await self.add_city(
                 ItemAdapter(item),
                 session=session,
             )

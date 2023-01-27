@@ -1,9 +1,8 @@
-import uuid
-
 import sqlalchemy as sa
 from dependency_injector.wiring import inject, Provide
-from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi import FastAPI, Depends, Query
 from fastapi_users import FastAPIUsers
+from sqlalchemy.orm import joinedload
 
 from common import db, di
 from common.auth.auth import auth_backend
@@ -153,7 +152,7 @@ async def delete_custom_analysis(
     await session.commit()
 
 
-@app.get('/follow-history', response_model=list[db.LinkFollowingHistory])
+@app.get('/follow-history')
 @inject
 async def get_follow_history_list(
     offset: int = Query(default=0, ge=0, description='Смещение по поисковым результатам'),
@@ -162,14 +161,21 @@ async def get_follow_history_list(
     user: db.User = Depends(current_user),
     session: db.AsyncSession = Depends(Provide[di.Container.session]),
 ):
-    query = sa.select(db.LinkFollowingHistory).where(
+    query = sa.select(db.LinkFollowingHistory).options(
+        joinedload(db.LinkFollowingHistory.analysis),
+    ).where(
         db.LinkFollowingHistory.user_id == user.id,
     ).order_by(
         db.LinkFollowingHistory.created_at.desc()
     ).offset(offset).limit(limit)
     result = await session.execute(query)
     # unpacking from tuple with single element
-    return [r[0] for r in result.all()]
+    follows = (r[0] for r in result.all())
+    return [
+        follow.dict() |
+        {'analysis': follow.analysis.dict()}
+        for follow in follows
+    ]
 
 
 @app.post('/follow-history', response_model=db.LinkFollowingHistory)
@@ -181,7 +187,7 @@ async def add_follow_history(
     session: db.AsyncSession = Depends(Provide[di.Container.session]),
 ):
     model = db.LinkFollowingHistory(
-        link=follow_history.link,
+        analysis_id=follow_history.analysis_id,
         user_id=user.id,
     )
     session.add(model)

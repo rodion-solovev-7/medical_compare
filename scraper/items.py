@@ -4,6 +4,7 @@ from decimal import Decimal
 
 @dataclass
 class InvitroAnalyzeItem:
+    organisation: str = 'invitro'
     city_href: str | None = None
     city_url: str | None = None
     city_name: str | None = None
@@ -20,6 +21,7 @@ class InvitroAnalyzeItem:
 
 @dataclass
 class InvitroCityItem:
+    organisation: str = 'invitro'
     href: str | None = None
     url: str | None = None
     name: str | None = None

@@ -24,6 +24,7 @@ class City(Base, table=True):
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, nullable=False)
     name: str
+    organisation: str
     url: str
     code: str | None = None
 
@@ -36,6 +37,7 @@ class Analysis(Base, table=True):
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, nullable=False)
     name: str
+    organisation: str
     description: str | None = None
     preparation: str | None = None
     purpose: str | None = None

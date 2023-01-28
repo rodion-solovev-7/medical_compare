@@ -10,7 +10,9 @@ from ._base import repeat_every
 async def scrape():
     spiders = [
         'invitro_city',
+        'citilab_city',
         'invitro_analysis',
+        'citilab_analysis',
     ]
     for spider in spiders:
         run_line = f'scrapy crawl {spider}'

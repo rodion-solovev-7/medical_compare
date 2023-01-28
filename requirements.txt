@@ -1,4 +1,6 @@
 asyncpg==0.27.0
+beautifulsoup4==4.11.1
+bs4==0.0.1
 dependency_injector==4.41.0
 fastapi==0.89.1
 fastapi-users==10.2.1

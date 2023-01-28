@@ -6,7 +6,7 @@ from scrapy import Item, Spider
 
 from common import di, db
 from common.db import models
-from scraper.items import InvitroAnalyzeItem, InvitroCityItem
+from scraper.items import AnalyzeItem, CityItem
 
 
 class SaveDbPipeline:
@@ -19,20 +19,20 @@ class SaveDbPipeline:
     @inject
     async def process_item(
         self,
-        item: Item | InvitroAnalyzeItem | dict,
+        item: Item | AnalyzeItem | dict,
         spider: Spider,
         session: db.AsyncSession = Provide[di.Container.session],
     ) -> Item:
         spider.logger.debug('Start processing item %s: %s', type(item), item)
 
-        if isinstance(item, InvitroAnalyzeItem):
-            spider.logger.debug('Identified InvitroAnalyze result')
+        if isinstance(item, AnalyzeItem):
+            spider.logger.debug('Identified AnalyzeItem result')
             await self.add_analysis(
                 ItemAdapter(item),
                 session=session,
             )
-        elif isinstance(item, InvitroCityItem):
-            spider.logger.debug('Identified InvitroCity result')
+        elif isinstance(item, CityItem):
+            spider.logger.debug('Identified CityItem result')
             await self.add_city(
                 ItemAdapter(item),
                 session=session,
@@ -51,7 +51,10 @@ class SaveDbPipeline:
         item = dict(**adapter)
         item['name'] = item.pop('analysis_name', None)
 
-        q = sa.select(models.City).where(models.City.name == item['city_name'])
+        q = sa.select(models.City).where(
+            models.City.name == item['city_name'],
+            models.City.organisation == item['organisation'],
+        )
         result = await session.execute(q)
         city: db.City = result.one()[0]
 
@@ -65,6 +68,16 @@ class SaveDbPipeline:
         *,
         session: db.AsyncSession,
     ) -> None:
+        item = dict(**adapter)
+        q = sa.select(models.City).where(
+            models.City.name == item['city_name'],
+            models.City.organisation == item['organisation'],
+        )
+        result = await session.execute(q)
+        if result.rowcount > 0:
+            # upsert
+            return
+
         city = models.City(**adapter)
         session.add(city)
         await session.commit()

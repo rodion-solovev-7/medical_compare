@@ -70,11 +70,11 @@ class SaveDbPipeline:
     ) -> None:
         item = dict(**adapter)
         q = sa.select(models.City).where(
-            models.City.name == item['city_name'],
+            models.City.name == item['name'],
             models.City.organisation == item['organisation'],
         )
         result = await session.execute(q)
-        if result.rowcount > 0:
+        if result.one_or_none() is not None:
             # upsert
             return
 

@@ -5,6 +5,7 @@ from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 import config
 from common import db, di
@@ -27,6 +28,14 @@ async def startup_event():
 async def shutdown_event():
     await db.engine.dispose()
 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # add sub-apps
 app.mount('/health', health.app)
